@@ -31,6 +31,8 @@ class Reader(Thread):
 			line = sys.stdin.readline()
 			if 'done' in line:
 				break
+			if 'exit' in line:
+				sys.exit(0)
 			try:
 				entities.append(SwarmEntity(line))
 			except:
@@ -62,7 +64,7 @@ def display():
 	for entity in Reader.swarm_entities:
 		glPushMatrix()
 		glTranslatef(entity.x, entity.y, entity.z)
-		gluSphere(mySphere, 1.0, 12, 12)
+		gluSphere(mySphere, 0.03, 12, 12)
 		glPopMatrix()
 	Reader.lock.release()
 	
