@@ -6,6 +6,8 @@ from OpenGL.GLU import *
 from OpenGL.GLUT import *
 from threading import Thread, Lock, Event
 
+Colors=[(0,1,0),(1,0,0),(0,0,1)]
+
 class Camera:
 	zoom = 1.0
 
@@ -15,6 +17,7 @@ class SwarmEntity:
 		self.x = float(parts[0])
 		self.y = float(parts[1])
 		self.z = float(parts[2])
+		self.race = int(parts[3])
 
 class Reader(Thread):
 	lock = Lock()
@@ -62,23 +65,24 @@ def display():
 	dist = 20.0 / Camera.zoom
 	gluLookAt(dist, dist, dist, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0)
 	axis()
-	glColor3f(0.0, 1.0, 0.0)
 	mySphere = gluNewQuadric()
 	gluQuadricDrawStyle(mySphere, GLU_LINE)
-	
+
 	Reader.lock.acquire()
 	for entity in Reader.swarm_entities:
 		glPushMatrix()
+		r,g,b=Colors[entity.race]
+		glColor3f(r,g,b)
 		glTranslatef(entity.x, entity.y, entity.z)
-		gluSphere(mySphere, 0.03, 12, 12)
+		gluSphere(mySphere, 0.005, 12, 12)
 		glPopMatrix()
 	Reader.lock.release()
-	
+
 	glFlush()
-	
+
 def axis():
 	glClear(GL_COLOR_BUFFER_BIT)
-	
+
 	glBegin(GL_LINES)
 	glColor3f(0.3, 0.3, 0.3)
 	glVertex3f(-10.0, 0.0, 0.0)
@@ -141,9 +145,9 @@ def axis():
 			glutBitmapCharacter(GLUT_BITMAP_8_BY_13, z)
 		else:
 			glutBitmapCharacter(GLUT_BITMAP_8_BY_13, ascii)
-	
+
 	glFlush()
-	
+
 def init():
 	glClearColor(0.0, 0.0, 0.0, 0.0)
 	glColor3f(0.0, 0.0, 0.0)
@@ -168,7 +172,7 @@ def mymouse(but, stat, x, y):
 			print x, y, "Press right button to exit"
 		else:
 			sys.exit()
-		
+
 glutInit(sys.argv)
 glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB)
 glutInitWindowSize(500, 500)
