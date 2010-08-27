@@ -1,12 +1,17 @@
 #!/usr/bin/env python
 
 import sys
+import Image
+import itertools
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 from threading import Thread, Lock, Event
+from time import sleep
 
 Colors=[(0,1,0),(1,0,0),(0,0,1)]
+counter=itertools.count()
+dumpFrames=False
 
 class Camera:
 	zoom = 1.0
@@ -38,6 +43,7 @@ class Reader(Thread):
 			raise Exception()
 		while line:
 			if line.startswith('done'):
+				sleep(0.1)
 				break
 			if line.startswith('exit'):
 				sys.exit(0)
@@ -77,6 +83,11 @@ def display():
 		gluSphere(mySphere, 0.005, 12, 12)
 		glPopMatrix()
 	Reader.lock.release()
+
+	if dumpFrames:
+		frame = glReadPixels( 0,0, 800, 600, GL_RGBA, GL_UNSIGNED_BYTE)
+		im = Image.frombuffer("RGBA", (800,600), frame, "raw", "RGBA", 0, 0)
+		im.save("frames/frame%08d.png" % counter.next())
 
 	glFlush()
 
@@ -184,6 +195,11 @@ glutMouseFunc(mymouse)
 glutIdleFunc(idle)
 
 init()
+
+print sys.argv
+if '--dumpFrames' in sys.argv:
+   dumpFrames=True
+
 rdr = Reader()
 rdr.start()
 glutMainLoop()
