@@ -9,7 +9,7 @@ from OpenGL.GLUT import *
 from threading import Thread, Lock, Event
 from time import sleep
 
-Colors=[(0,1,0),(1,0,0),(0,0,1)]
+Colors=[(1,1,1),(1,0,0),(0,1,0)]
 counter=itertools.count()
 dumpFrames=False
 
@@ -80,13 +80,13 @@ def display():
 		r,g,b=Colors[entity.race]
 		glColor3f(r,g,b)
 		glTranslatef(entity.x, entity.y, entity.z)
-		gluSphere(mySphere, 0.005, 12, 12)
+		gluSphere(mySphere, 0.015, 12, 12)
 		glPopMatrix()
 	Reader.lock.release()
 
 	if dumpFrames:
-		frame = glReadPixels( 0,0, 800, 600, GL_RGBA, GL_UNSIGNED_BYTE)
-		im = Image.frombuffer("RGBA", (800,600), frame, "raw", "RGBA", 0, 0)
+		frame = glReadPixels( 0,0, 1280, 700, GL_RGBA, GL_UNSIGNED_BYTE)
+		im = Image.frombuffer("RGBA", (1280,700), frame, "raw", "RGBA", 0, 0)
 		im.save("frames/frame%08d.png" % counter.next())
 
 	glFlush()
@@ -115,47 +115,47 @@ def axis():
 		# x axis positive
 		glRasterPos3f(i, 0.0, 0.0)
 		glColor3f(0.3, 0.3, 0.3)
-		if i == biggest:
-			glutBitmapCharacter(GLUT_BITMAP_8_BY_13, x)
-		else:
-			glutBitmapCharacter(GLUT_BITMAP_8_BY_13, ascii)
+		#if i == biggest:
+		#	glutBitmapCharacter(GLUT_BITMAP_8_BY_13, x)
+		#else:
+		#	glutBitmapCharacter(GLUT_BITMAP_8_BY_13, ascii)
 		# x axis negative
 		glRasterPos3f(-i, 0.0, 0.0)
 		glColor3f(0.5, 0.0, 0.0)
-		if i == biggest:
-			glutBitmapCharacter(GLUT_BITMAP_8_BY_13, x)
-		else:
-			glutBitmapCharacter(GLUT_BITMAP_8_BY_13, ascii)
+		#if i == biggest:
+		#	glutBitmapCharacter(GLUT_BITMAP_8_BY_13, x)
+		#else:
+		#	glutBitmapCharacter(GLUT_BITMAP_8_BY_13, ascii)
 
 		# y axis positive
 		glRasterPos3f(0.0, i, 0.0)
 		glColor3f(0.3, 0.3, 0.3)
-		if i == biggest:
-			glutBitmapCharacter(GLUT_BITMAP_8_BY_13, y)
-		else:
-			glutBitmapCharacter(GLUT_BITMAP_8_BY_13, ascii)
+		#if i == biggest:
+		#	glutBitmapCharacter(GLUT_BITMAP_8_BY_13, y)
+		#else:
+		#	glutBitmapCharacter(GLUT_BITMAP_8_BY_13, ascii)
 		# x axis negative
 		glRasterPos3f(0.0, -i, 0.0)
 		glColor3f(0.5, 0.0, 0.0)
-		if i == biggest:
-			glutBitmapCharacter(GLUT_BITMAP_8_BY_13, y)
-		else:
-			glutBitmapCharacter(GLUT_BITMAP_8_BY_13, ascii)
+		#if i == biggest:
+		#	glutBitmapCharacter(GLUT_BITMAP_8_BY_13, y)
+		#else:
+		#	glutBitmapCharacter(GLUT_BITMAP_8_BY_13, ascii)
 
 		# z axis positive
 		glRasterPos3f(0.0, 0.0, i)
 		glColor3f(0.3, 0.3, 0.3)
-		if i == biggest:
-			glutBitmapCharacter(GLUT_BITMAP_8_BY_13, z)
-		else:
-			glutBitmapCharacter(GLUT_BITMAP_8_BY_13, ascii)
+		#if i == biggest:
+		#	glutBitmapCharacter(GLUT_BITMAP_8_BY_13, z)
+		#else:
+		#	glutBitmapCharacter(GLUT_BITMAP_8_BY_13, ascii)
 		# z axis negative
 		glRasterPos3f(0.0, 0.0, -i)
 		glColor3f(0.5, 0.0, 0.0)
-		if i == biggest:
-			glutBitmapCharacter(GLUT_BITMAP_8_BY_13, z)
-		else:
-			glutBitmapCharacter(GLUT_BITMAP_8_BY_13, ascii)
+		#if i == biggest:
+		#	glutBitmapCharacter(GLUT_BITMAP_8_BY_13, z)
+		#else:
+		#	glutBitmapCharacter(GLUT_BITMAP_8_BY_13, ascii)
 
 	glFlush()
 
