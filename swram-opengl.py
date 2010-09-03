@@ -15,6 +15,10 @@ dumpFrames=False
 
 class Camera:
 	zoom = 1.0
+	pos = [20, 20, 20]
+	up = [0, 1, 0 ]
+	center = [0, 0, 0]
+	rotation = [0, 0, 0]
 
 class SwarmEntity:
 	def __init__(self, line):
@@ -28,9 +32,12 @@ class Reader(Thread):
 	lock = Lock()
 	changed = Event()
 	swarm_entities = []
+	paused=False
 	def run(self):
 		print 'Waithing for data on stdin'
 		while True:
+			while Reader.paused:
+				sleep(0.1)
 			try:
 				self.read_entities()
 			except:
@@ -69,7 +76,12 @@ def idle():
 def display():
 	glLoadIdentity()
 	dist = 20.0 / Camera.zoom
-	gluLookAt(dist, dist, dist, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0)
+	gluLookAt(Camera.pos[0], Camera.pos[1], Camera.pos[2],
+				 Camera.center[0], Camera.center[1], Camera.center[2],
+				 Camera.up[0], Camera.up[1], Camera.up[2])
+	glRotatef(Camera.rotation[0], 1, 0, 0);
+	glRotatef(Camera.rotation[1], 0, 1, 0);
+	glRotatef(Camera.rotation[2], 0, 0, 1);
 	axis()
 	mySphere = gluNewQuadric()
 	gluQuadricDrawStyle(mySphere, GLU_LINE)
@@ -115,47 +127,47 @@ def axis():
 		# x axis positive
 		glRasterPos3f(i, 0.0, 0.0)
 		glColor3f(0.3, 0.3, 0.3)
-		#if i == biggest:
-		#	glutBitmapCharacter(GLUT_BITMAP_8_BY_13, x)
-		#else:
-		#	glutBitmapCharacter(GLUT_BITMAP_8_BY_13, ascii)
+		if i == biggest:
+			glutBitmapCharacter(GLUT_BITMAP_8_BY_13, x)
+		else:
+			glutBitmapCharacter(GLUT_BITMAP_8_BY_13, ascii)
 		# x axis negative
 		glRasterPos3f(-i, 0.0, 0.0)
 		glColor3f(0.5, 0.0, 0.0)
-		#if i == biggest:
-		#	glutBitmapCharacter(GLUT_BITMAP_8_BY_13, x)
-		#else:
-		#	glutBitmapCharacter(GLUT_BITMAP_8_BY_13, ascii)
+		if i == biggest:
+			glutBitmapCharacter(GLUT_BITMAP_8_BY_13, x)
+		else:
+			glutBitmapCharacter(GLUT_BITMAP_8_BY_13, ascii)
 
 		# y axis positive
 		glRasterPos3f(0.0, i, 0.0)
 		glColor3f(0.3, 0.3, 0.3)
-		#if i == biggest:
-		#	glutBitmapCharacter(GLUT_BITMAP_8_BY_13, y)
-		#else:
-		#	glutBitmapCharacter(GLUT_BITMAP_8_BY_13, ascii)
+		if i == biggest:
+			glutBitmapCharacter(GLUT_BITMAP_8_BY_13, y)
+		else:
+			glutBitmapCharacter(GLUT_BITMAP_8_BY_13, ascii)
 		# x axis negative
 		glRasterPos3f(0.0, -i, 0.0)
 		glColor3f(0.5, 0.0, 0.0)
-		#if i == biggest:
-		#	glutBitmapCharacter(GLUT_BITMAP_8_BY_13, y)
-		#else:
-		#	glutBitmapCharacter(GLUT_BITMAP_8_BY_13, ascii)
+		if i == biggest:
+			glutBitmapCharacter(GLUT_BITMAP_8_BY_13, y)
+		else:
+			glutBitmapCharacter(GLUT_BITMAP_8_BY_13, ascii)
 
 		# z axis positive
 		glRasterPos3f(0.0, 0.0, i)
 		glColor3f(0.3, 0.3, 0.3)
-		#if i == biggest:
-		#	glutBitmapCharacter(GLUT_BITMAP_8_BY_13, z)
-		#else:
-		#	glutBitmapCharacter(GLUT_BITMAP_8_BY_13, ascii)
+		if i == biggest:
+			glutBitmapCharacter(GLUT_BITMAP_8_BY_13, z)
+		else:
+			glutBitmapCharacter(GLUT_BITMAP_8_BY_13, ascii)
 		# z axis negative
 		glRasterPos3f(0.0, 0.0, -i)
 		glColor3f(0.5, 0.0, 0.0)
-		#if i == biggest:
-		#	glutBitmapCharacter(GLUT_BITMAP_8_BY_13, z)
-		#else:
-		#	glutBitmapCharacter(GLUT_BITMAP_8_BY_13, ascii)
+		if i == biggest:
+			glutBitmapCharacter(GLUT_BITMAP_8_BY_13, z)
+		else:
+			glutBitmapCharacter(GLUT_BITMAP_8_BY_13, ascii)
 
 	glFlush()
 
@@ -172,9 +184,28 @@ def mykeyb(key, x, y):
 		Camera.zoom *= 1.2
 	elif key == '-':
 		Camera.zoom /= 1.2
+	elif key== 'q':
+		sys.exit(0);
+	elif key=='w':
+		Camera.pos[0] -= 0.5
+		Camera.pos[1] -= 0.5
+		Camera.pos[2] -= 0.5
+	elif key=='s':
+		Camera.pos[0] += 0.5
+		Camera.pos[1] += 0.5
+		Camera.pos[2] += 0.5
+	elif key=='a':
+		Camera.rotation[1] -= 1
+	elif key=='d':
+		Camera.rotation[1] += 1
+	elif key=='z':
+		Camera.rotation[2] -= 1
+	elif key=='x':
+		Camera.rotation[2] += 1
+	elif key==' ':
+		Reader.paused=not Reader.paused
 	else:
 		return
-	print 'Zoom is now', Camera.zoom
 	glutPostRedisplay()
 
 def mymouse(but, stat, x, y):
@@ -196,9 +227,8 @@ glutIdleFunc(idle)
 
 init()
 
-print sys.argv
 if '--dumpFrames' in sys.argv:
-   dumpFrames=True
+	dumpFrames=True
 
 rdr = Reader()
 rdr.start()
