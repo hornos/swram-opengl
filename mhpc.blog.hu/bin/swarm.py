@@ -7,7 +7,7 @@ sys.path.append( os.path.dirname( sys.argv[0] ) + "/../lib" )
 
 ### IMPORTS
 from pypak.Script import *
-from hsbp.Swarm import *
+from hspbp.Swarm import *
 
 ### Program
 class Program( Script ):
